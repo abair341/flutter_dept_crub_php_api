@@ -1,101 +1,83 @@
+import 'dart:convert';
+
+import 'package:crud_dept_project/model_classes/all_dept_lists_class.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:crud_dept_project/configss/logger.dart';
 import 'package:logger/logger.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class alldeptinsert extends StatefulWidget {
+
+  final Alldeptlistclass user;
+  final state = _alldeptinsertState();
+  final Function onDelete;
+
+  alldeptinsert({Key key, this.user, this.onDelete}) : super(key: key);
+
   @override
-  _alldeptinsertState createState() => _alldeptinsertState();
+  _alldeptinsertState createState() => state;
+
+
+  bool isValid() => state.validate();
 }
 
 class _alldeptinsertState extends State<alldeptinsert> {
   Logger log = getLogger("alldeptinsert");
-  TextEditingController deptnameController = TextEditingController();
+  final form = GlobalKey<FormState>();
 
-  Future _insertDeptAll() async {
-    /*String insert_user = 
-                 urlEncode.encode("dept_name", "UTF-8") + "=" + urlEncode.encode( deptnameController.text , "UTF-8") +
-           "&" + urlEncode.encode("ACTION", "UTF-8") + "=" + urlEncode.encode("db_dept_entry_json", "UTF-8") 
-                            ; 
-                            */
 
-    /*var loginObj = new Map<String, dynamic>();
-    loginObj['ACTION'] = "db_dpt_entry_json";
-    loginObj['php_deptname'] =
-        '[{"dept_id":"7","dept_name":"1"},{"dept_id":"8","dept_name":"2"}]';
-        */
-
-    /*Map<String, dynamic> body = {'ACTION': 'db_dpt_entry_json', 
-    'php_deptname':  '[{"dept_id":"7","dept_name":"1"},{"dept_id":"8","dept_name":"2"}]'};
-      */
-
-    final response = await http.post(
-        "https://unlabelled-argument.000webhostapp.com/db_dept_entry_json.php",
-        body: 
-         {
-          'ACTION': 'db_dpt_entry_json',
-          'php_deptname' : '[{"dept_id":"7","dept_name":"1"},{"dept_id":"8","dept_name":"2"}]'
-          }
-        );
-    log.i(response.statusCode);
-    log.i(response.body);
-  }
+  TextEditingController _deptController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.teal,
-      appBar: AppBar(
-        title: Text("Department Entry"),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Material(
+        elevation: 1,
+        borderRadius: BorderRadius.circular(8),
+        clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: form,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextFormField(
-                controller: deptnameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                  labelText: 'Department Name',
-                  labelStyle: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 3.0,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RaisedButton(
-                      shape: StadiumBorder(),
-                      onPressed: () => _insertDeptAll(),
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Color(0xff800000),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                      elevation: 3,
-                      color: Colors.white,
-                    ),
+              AppBar(
+                leading: Icon(Icons.verified_user),
+                title: Text("Department Info"),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed:  widget.onDelete,
                   ),
                 ],
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Enter Department Name',
+                    hintText: 'Enter Department Name',
+                    icon: Icon(Icons.text_fields),
+                    isDense: true,
+                  ),
+                  controller: _deptController,
+                   onSaved: (val) {
+                      widget.user.deptName = val;
+                    },
+                  validator: (val) =>
+                        val.length > 3 ? null : 'Department name is invalid',
+                        maxLength: 100,
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+  bool validate() {
+    var valid = form.currentState.validate();
+    if (valid) form.currentState.save();
+    return valid;
   }
 }

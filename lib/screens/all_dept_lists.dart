@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crud_dept_project/configss/logger.dart';
 import 'package:crud_dept_project/model_classes/all_dept_lists_class.dart';
+import 'package:crud_dept_project/screens/multiform.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
@@ -20,7 +21,7 @@ class _alldeptlistsState extends State<alldeptlists> {
 
   Future<List<Alldeptlistclass>> _getDeptListAll() async {
     final response = await http
-        .get("https://unlabelled-argument.000webhostapp.com/db_dept_info.php");
+        .get("http://abair-com.preview-domain.com/db_dept_info_all.php");
 
     if (response.statusCode == 200) {
       List parsed = jsonDecode(response.body);
@@ -41,18 +42,34 @@ class _alldeptlistsState extends State<alldeptlists> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           Navigator.push(
-            context, MaterialPageRoute(
-            builder: (context)=>alldeptinsert()
-          ),
+            context,
+            MaterialPageRoute(builder: (context) => MultiForm()),
           );
         },
-      child: Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
       backgroundColor: Colors.teal,
       appBar: AppBar(
         title: Text("Department Crud"),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.white,
+                size: 40.0,
+              ),
+              onPressed: () {
+               setState(() {
+                _getDeptListAll(); 
+               }); 
+              },
+            ),
+          )
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -102,10 +119,11 @@ class _alldeptlistsState extends State<alldeptlists> {
                                       ),
                                     ),
                                   ),
-                                  IconButton(icon: Icon(Icons.edit)
-                                  , onPressed:(){}),
                                   IconButton(
-                                    icon: Icon(Icons.delete), onPressed:(){},
+                                      icon: Icon(Icons.edit), onPressed: () {}),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {},
                                     color: Color(0xff800000),
                                   ),
                                 ],
