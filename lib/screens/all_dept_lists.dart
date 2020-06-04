@@ -21,7 +21,7 @@ class _alldeptlistsState extends State<alldeptlists> {
 
   Future<List<Alldeptlistclass>> _getDeptListAll() async {
     final response = await http
-        .get("http://abair-com.preview-domain.com/db_dept_info_all.php");
+        .get("http://abair-net.preview-domain.com/db_dept_info_all.php");
 
     if (response.statusCode == 200) {
       List parsed = jsonDecode(response.body);

@@ -22,7 +22,9 @@ dependencies:
   http: ^0.12.1
   logger:
   fluttertoast: ^4.0.0
+  
  
+  progress_dialog: ^1.0.7
 
 
 
