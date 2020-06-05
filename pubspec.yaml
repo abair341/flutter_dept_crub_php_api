@@ -25,6 +25,7 @@ dependencies:
   
  
   progress_dialog: ^1.0.7
+  rflutter_alert: ^1.0.3
 
 
 

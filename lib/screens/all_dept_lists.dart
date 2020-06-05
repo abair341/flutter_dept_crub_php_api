@@ -6,7 +6,7 @@ import 'package:crud_dept_project/screens/multiform.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'all_dept_insert.dart';
 
 class alldeptlists extends StatefulWidget {
@@ -63,9 +63,9 @@ class _alldeptlistsState extends State<alldeptlists> {
                 size: 40.0,
               ),
               onPressed: () {
-               setState(() {
-                _getDeptListAll(); 
-               }); 
+                setState(() {
+                  _getDeptListAll();
+                });
               },
             ),
           )
@@ -123,7 +123,12 @@ class _alldeptlistsState extends State<alldeptlists> {
                                       icon: Icon(Icons.edit), onPressed: () {}),
                                   IconButton(
                                     icon: Icon(Icons.delete),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      return _showAlertDialog(
+                                          context,
+                                          '${snapshot.data[index].deptId}',
+                                          '${snapshot.data[index].deptName}');
+                                    },
                                     color: Color(0xff800000),
                                   ),
                                 ],
@@ -143,5 +148,53 @@ class _alldeptlistsState extends State<alldeptlists> {
         ),
       ),
     );
+  }
+
+  void _showAlertDialog(context, String v_dept_id, String v_dept_name) {
+    Alert(
+        context: context,
+        title: "Delete Alert",
+        content: Column(
+          children: <Widget>[Text("Do you want to delete?")],
+        ),
+        buttons: [
+          DialogButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "No",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+          DialogButton(
+            onPressed: () {
+              _deleteDept(v_dept_id, v_dept_name);
+            },
+            child: Text(
+              "Yes",
+              style: TextStyle(color: Colors.white, fontSize: 22),
+            ),
+          )
+        ]).show();
+  }
+
+  _deleteDept(String passDeptNo, String passDeptName) async {
+
+    print(passDeptNo);
+    print(passDeptName);
+
+    final response = await http.post(
+        "http://abair-net.preview-domain.com/db_dept_delete.php",
+        body: {
+          "action": 'db_dpt_delete',
+          "php_deptname": passDeptName,
+          "php_deptid": passDeptNo
+        });
+
+    if (response.statusCode == 200 && response.body != 'fail') {
+      print(response.body);
+    } else {
+      print('Error Occurr');
+      print(response.body);
+    }
   }
 }
