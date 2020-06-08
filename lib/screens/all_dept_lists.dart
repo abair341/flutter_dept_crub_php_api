@@ -24,7 +24,7 @@ class _alldeptlistsState extends State<alldeptlists> {
 
   Future<List<Alldeptlistclass>> _getDeptListAll() async {
     final response = await http
-        .get("http://abair-net.preview-domain.com/db_dept_info_all.php");
+        .get("http://abair.gq/db_dept_info_all.php");
 
     if (response.statusCode == 200) {
       List parsed = jsonDecode(response.body);
@@ -207,7 +207,7 @@ class _alldeptlistsState extends State<alldeptlists> {
     print(passDeptName);
 
     final response = await http
-        .post("http://abair-net.preview-domain.com/db_dept_delete.php", body: {
+        .post("http://abair.gq/db_dept_delete.php", body: {
       "action": 'db_dpt_delete',
       "php_deptname": passDeptName,
       "php_deptid": passDeptNo

@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:crud_dept_project/model_classes/all_dept_lists_class.dart';
-import 'package:crud_dept_project/screens/all_dept_insert.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
+
+import '../model_classes/all_dept_lists_class.dart';
+import 'all_dept_insert.dart';
 
 class MultiForm extends StatefulWidget {
   @override
@@ -12,12 +14,13 @@ class MultiForm extends StatefulWidget {
 }
 
 class _MultiFormState extends State<MultiForm> {
-  List<alldeptinsert> forms = [];
+  List forms = [];
+  Alldeptlistclass _alldeptlistclass = Alldeptlistclass();
   ProgressDialog _progressDialog;
+  bool buttonEnabled = true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     onAddForm();
   }
@@ -25,7 +28,6 @@ class _MultiFormState extends State<MultiForm> {
   @override
   Widget build(BuildContext context) {
     _progressDialog = new ProgressDialog(context);
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -40,11 +42,15 @@ class _MultiFormState extends State<MultiForm> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: onAddForm,
+        onPressed: () {
+          if (buttonEnabled) {
+            buttonEnabled = false;
+            onAddForm();
+          }
+        },
         foregroundColor: Colors.white,
       ),
       body: ListView.builder(
-          addAutomaticKeepAlives: true,
           itemCount: forms.length,
           itemBuilder: (context, index) {
             return forms[index];
@@ -52,18 +58,22 @@ class _MultiFormState extends State<MultiForm> {
     );
   }
 
-  void onAddForm() {
-    setState(() {
-      var _user = Alldeptlistclass();
-
-      forms.add(alldeptinsert(
-        onDelete: () => onDelete(_user),
-        user: _user,
-      ));
-    });
+  void onAddForm() async {
+    try {
+      setState(() {
+        var _user = _alldeptlistclass;
+        forms.add(new alldeptinsert(
+          onDelete: () => onDelete(_user),
+          user: _user,
+        ));
+      });
+    } catch (e) {
+      print(e);
+    }
+    buttonEnabled = true;
   }
 
-  void onDelete(Alldeptlistclass _user) {
+  void onDelete(dynamic _user) {
     setState(() {
       var find = forms.firstWhere(
         (element) => element.user == _user,
@@ -105,7 +115,7 @@ class _MultiFormState extends State<MultiForm> {
 
   insertDeptListAll(List<Alldeptlistclass> deptList) async {
     final response = await http.post(
-        "http://abair-net.preview-domain.com/db_dept_entry_json_c.php",
+        "http://abair.gq/db_dept_entry_json_c.php",
         body: {
           "action": 'db_dpt_entry_json',
           "php_deptname": jsonEncode(deptList)

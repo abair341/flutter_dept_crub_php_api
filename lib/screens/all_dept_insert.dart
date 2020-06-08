@@ -8,24 +8,21 @@ import 'package:logger/logger.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class alldeptinsert extends StatefulWidget {
-
   final Alldeptlistclass user;
-  final state = _alldeptinsertState();
+  //final state = _alldeptinsertState();
   final Function onDelete;
 
   alldeptinsert({Key key, this.user, this.onDelete}) : super(key: key);
 
   @override
-  _alldeptinsertState createState() => state;
+  _alldeptinsertState createState() => _alldeptinsertState();
 
-
-  bool isValid() => state.validate();
+  bool isValid() => _alldeptinsertState().validate();
 }
 
 class _alldeptinsertState extends State<alldeptinsert> {
   Logger log = getLogger("alldeptinsert");
   final form = GlobalKey<FormState>();
-
 
   TextEditingController _deptController = new TextEditingController();
 
@@ -47,7 +44,7 @@ class _alldeptinsertState extends State<alldeptinsert> {
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.delete),
-                    onPressed:  widget.onDelete,
+                    onPressed: widget.onDelete,
                   ),
                 ],
               ),
@@ -61,12 +58,12 @@ class _alldeptinsertState extends State<alldeptinsert> {
                     isDense: true,
                   ),
                   controller: _deptController,
-                   onSaved: (val) {
-                      widget.user.deptName = val;
-                    },
+                  onSaved: (val) {
+                    widget.user.deptName = val;
+                  },
                   validator: (val) =>
-                        val.length > 3 ? null : 'Department name is invalid',
-                        maxLength: 100,
+                      val.length > 3 ? null : 'Department name is invalid',
+                  maxLength: 100,
                 ),
               ),
             ],
@@ -75,6 +72,7 @@ class _alldeptinsertState extends State<alldeptinsert> {
       ),
     );
   }
+
   bool validate() {
     var valid = form.currentState.validate();
     if (valid) form.currentState.save();
